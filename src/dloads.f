@@ -266,7 +266,7 @@ c     call reorderampl(amname,namta,nam)
           p2(1)=1.d0
           p2(2)=0.d0
           p2(3)=0.d0
-        elseif(label(1:7).eq.'CENTRIF') then
+        elseif((label(1:7).eq.'CENTRIF').or.(label(1:4).eq.'ROTA')) then
 !
 !         centrifugal axis by the coordinates of a point and a
 !         direction vector (fixed during the calculation)
@@ -342,7 +342,7 @@ c     BernhardiEnd
             return
           endif
           if((label(1:7).eq.'CENTRIF').or.(label(1:4).eq.'GRAV').or.
-     &         (label(1:6).eq.'NEWTON')) then
+     &         (label(1:6).eq.'NEWTON').or.(label(1:4).eq.'ROTA')) then
             elset(1:80)=textpart(1)(1:80)
             elset(81:81)=' '
             call bodyadd(cbody,ibody,xbody,nbody,nbody_,elset,label,
@@ -462,7 +462,7 @@ c            enddo
           endif
 !     
           if((label(1:7).eq.'CENTRIF').or.(label(1:4).eq.'GRAV').or.
-     &         (label(1:6).eq.'NEWTON')) then
+     &         (label(1:6).eq.'NEWTON').or.(label(1:4).eq.'ROTA')) then
             call bodyadd(cbody,ibody,xbody,nbody,nbody_,elset,label,
      &           iamplitude,xmagnitude,p1,p2,bodyf,xbodyold,lc,idefbody)
           else

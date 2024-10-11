@@ -729,7 +729,7 @@ c          endif
           if((istat.lt.0).or.(key.eq.1)) exit
           read(textpart(2)(1:5),'(a5)',iostat=istat) llab
           if((llab.eq.'GRAV ').or.(llab.eq.'CENTR').or.
-     &         (llab.eq.'NEWTO')) then
+     &         (llab.eq.'NEWTO').or.(llab.eq.'ROTA ')) then
             nbody_=nbody_+1
             cycle
           endif
