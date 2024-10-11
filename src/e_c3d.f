@@ -447,7 +447,7 @@ c     write(*,*) 'e_c3d ',nelem
                 ff(i1)=bodyfx(i1)*xmass
               enddo
 !     
-              if(omx.gt.0.d0) then
+              if(dabs(omx).gt.0.d0) then
 !     
 !     omega**2 * mass
 !     
@@ -467,12 +467,25 @@ c     write(*,*) 'e_c3d ',nelem
                   q(i1)=q(i1)-p1(i1)
                 enddo
                 const=q(1)*p2(1)+q(2)*p2(2)+q(3)*p2(3)
+                do i1=1,3
+                  q(i1) = (q(i1)-const*p2(i1))
+                enddo
+
+                if(omx.gt.0.d0) then
 !     
 !     inclusion of the centrifugal force into the body force
+!
+                  do i1=1,3
+                    ff(i1)=ff(i1)+q(i1)*om
+                  enddo
+                else
 !     
-                do i1=1,3
-                  ff(i1)=ff(i1)+(q(i1)-const*p2(i1))*om
-                enddo
+!     inclusion of the Euler force into the body force
+!
+                  ff(1)=ff(1)+(p2(2)*q(3)-p2(3)*q(2))*om
+                  ff(2)=ff(2)+(p2(3)*q(1)-p2(1)*q(3))*om
+                  ff(3)=ff(3)+(p2(1)*q(2)-p2(2)*q(1))*om
+                endif
               endif
             endif
           endif
@@ -1254,7 +1267,7 @@ c     mortar end
 !     body forces
 !     
           if(nbody.ne.0) then
-            if(om.gt.0.d0) then
+            if (dabs(omx).gt.0.d0) then
               do i1=1,3
 !     
 !     computation of the global coordinates of the gauss
@@ -1274,13 +1287,27 @@ c     mortar end
 !     
                 q(i1)=q(i1)-p1(i1)
               enddo
+
               const=q(1)*p2(1)+q(2)*p2(2)+q(3)*p2(3)
+              do i1=1,3
+                q(i1) = (q(i1)-const*p2(i1))
+              enddo
+
+              if(omx.gt.0.d0) then
 !     
 !     inclusion of the centrifugal force into the body force
+!
+                  do i1=1,3
+                    bf(i1)=bodyf(i1)+q(i1)*om
+                  enddo
+                else
 !     
-              do i1=1,3
-                bf(i1)=bodyf(i1)+(q(i1)-const*p2(i1))*om
-              enddo
+!     inclusion of the Euler force into the body force
+!
+                  bf(1)=bodyf(1)+(p2(2)*q(3)-p2(3)*q(2))*om
+                  bf(2)=bodyf(2)+(p2(3)*q(1)-p2(1)*q(3))*om
+                  bf(3)=bodyf(3)+(p2(1)*q(2)-p2(2)*q(1))*om
+                endif
             else
               do i1=1,3
                 bf(i1)=bodyf(i1)

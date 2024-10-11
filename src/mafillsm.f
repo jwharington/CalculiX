@@ -193,7 +193,7 @@ c     mortar end
             do
               j=ipobody(1,index)
               if(j.eq.0) exit
-              if(ibody(1,j).eq.1) then
+              if((ibody(1,j).eq.1).or.(ibody(1,j).eq.5)) then
                 om=xbody(1,j)
                 p1(1)=xbody(2,j)
                 p1(2)=xbody(3,j)
@@ -215,6 +215,16 @@ c     mortar end
                 call newton(icalccg,ne,ipkon,lakon,kon,t0,co,rhcon,
      &               nrhcon,ntmat_,physcon,i,cgr,bodyf,ielmat,ithermal,
      &               vold,mi)
+              endif
+              if(ibody(1,j).eq.5) then
+!     handle rotational acceleration (Euler forces)
+!       pass negative om
+                if(om.gt.0) then
+                  do k=1,3
+                    p2(k) = -p2(k)
+                  enddo
+                  om= -om
+                endif
               endif
               index=ipobody(2,index)
               if(index.eq.0) exit
