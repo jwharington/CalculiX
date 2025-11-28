@@ -33,7 +33,7 @@
 *STEP
 *STATIC
 *DLOAD
-Eall,ROTA,1.e10,0.,0.,0.,0.,1.,0.
+Eall,ROTA,1.e8,0.,0.,0.,0.,1.,0.
 *NODE PRINT,NSET=Nall
 U
 *EL PRINT,ELSET=Eall

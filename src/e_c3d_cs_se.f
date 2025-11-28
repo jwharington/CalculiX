@@ -514,6 +514,7 @@ c      endif
 !
 !                 inclusion of the centrifugal force into the body force
 !
+! JMW handle ROTA
                   do i1=1,3
                      ff(i1)=bodyf(i1)+(q(i1)-const*p2(i1))*om
                   enddo
@@ -1212,6 +1213,7 @@ c                     if(iperturb(1).eq.0) then
 !
 !                 inclusion of the centrifugal force into the body force
 !
+! JMW handle ROTA
                   do i1=1,3
                      bf(i1)=bodyf(i1)+(q(i1)-const*p2(i1))*om
                   enddo

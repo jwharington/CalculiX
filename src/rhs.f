@@ -125,6 +125,7 @@
                   call exit(201)
                 endif
                 om(nom)=xbody(1,j)
+! JMW TODO handle ROTA
                 if(ibody(1,j).eq.1) then
                   p1(1,nom)=xbody(2,j)
                   p1(2,nom)=xbody(3,j)

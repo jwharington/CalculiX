@@ -43,6 +43,7 @@
          else
             cycle
          endif
+! JMWJMW
 !
 !        determine
 !          om: rotational speed
@@ -101,6 +102,16 @@
                do m=1,3
                   p(m)=(p(m)-dd*xn(m))*om
                enddo
+! JMWJMW
+!
+! om: rotational speed
+! a: point on axis
+! xn: unit vector on axis
+!
+! dd = p dot xn         : projection of p in direction of xn
+! p = (p - dd xn) om    : component of p perpendicular to xn
+! v += xn cross p       : velocity in inertial frame
+!
                veold(1,node)=veold(1,node)+
      &                       xn(2)*p(3)-xn(3)*p(2)
                veold(2,node)=veold(2,node)+
@@ -167,6 +178,8 @@ c            enddo
                      do m=1,3
                         p(m)=(p(m)-dd*xn(m))*om
                      enddo
+! JMWJMW
+! as above
                      veold(1,node)=veold(1,node)+
      &                    xn(2)*p(3)-xn(3)*p(2)
                      veold(2,node)=veold(2,node)+
@@ -220,6 +233,8 @@ c            enddo
                         do m=1,3
                            p(m)=(p(m)-dd*xn(m))*om
                         enddo
+! JMWJMW
+! as above
                         veold(1,node)=veold(1,node)+
      &                       xn(2)*p(3)-xn(3)*p(2)
                         veold(2,node)=veold(2,node)+

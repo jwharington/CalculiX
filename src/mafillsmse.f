@@ -152,6 +152,7 @@ c     Bernhardi end
                do
                   j=ipobody(1,index)
                   if(j.eq.0) exit
+! JMW TODO handle ROTA
                   if(ibody(1,j).eq.1) then
                      om=xbody(1,j)
                      p1(1)=xbody(2,j)

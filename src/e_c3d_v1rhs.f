@@ -397,7 +397,8 @@ c          umttot=dvi
             enddo
 !     
 !     inclusion of the centrifugal force into the body force
-!     
+! 
+! JMW handle ROTA    
             if(om.gt.0.d0) then
               do i1=1,3
                 bf(i1)=bf(i1)+(q(i1)-const*p2(i1))*om+

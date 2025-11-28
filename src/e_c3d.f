@@ -1267,7 +1267,7 @@ c     mortar end
 !     body forces
 !     
           if(nbody.ne.0) then
-            if (dabs(omx).gt.0.d0) then
+            if (dabs(om).gt.0.d0) then
               do i1=1,3
 !     
 !     computation of the global coordinates of the gauss
