@@ -142,6 +142,14 @@
                 bodyf(2)=bodyf(2)+xbody(1,j)*xbody(3,j)
                 bodyf(3)=bodyf(3)+xbody(1,j)*xbody(4,j)
 !     
+!     assigning Coriolis body forces for static analysis
+!     (force = -2*rho*omega x v, stored as magnitude*direction)
+!     
+              elseif(ibody(1,j).eq.6) then
+                bodyf(1)=bodyf(1)+xbody(1,j)*xbody(2,j)
+                bodyf(2)=bodyf(2)+xbody(1,j)*xbody(3,j)
+                bodyf(3)=bodyf(3)+xbody(1,j)*xbody(4,j)
+!     
 !     assigning newton gravity forces
 !     
               elseif(ibody(1,j).eq.3) then
