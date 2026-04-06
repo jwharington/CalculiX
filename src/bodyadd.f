@@ -42,6 +42,8 @@
          ilabel=2
       elseif(label(1:6).eq.'NEWTON') then
          ilabel=3
+      elseif(label(1:8).eq.'CORIOLIS') then
+         ilabel=6
       elseif(label(1:5).eq.'CORIO') then
          ilabel=4
       elseif(label(1:4).eq.'ROTA') then
@@ -52,6 +54,14 @@
 !
       if(ilabel.eq.2) then
          dd=dsqrt(bodyf(1)*bodyf(1)+bodyf(2)*bodyf(2)+bodyf(3)*bodyf(3))
+         do i=1,3
+            bodyf(i)=bodyf(i)/dd
+         enddo
+      elseif(ilabel.eq.6) then
+         dd=dsqrt(bodyf(1)*bodyf(1)+bodyf(2)*bodyf(2)+bodyf(3)*bodyf(3))
+         if(dd.lt.1.d-30) then
+            return
+         endif
          do i=1,3
             bodyf(i)=bodyf(i)/dd
          enddo
@@ -73,6 +83,12 @@
 !                 a new loading
 !
                   if(ilabel.eq.2) then
+                     if(dabs(bodyf(1)*xbody(2,id)+bodyf(2)*xbody(3,id)+
+     &                  bodyf(3)*xbody(4,id)-1.d0).gt.1.d-10) then
+                        id=id-1
+                        cycle
+                     endif
+                  elseif(ilabel.eq.6) then
                      if(dabs(bodyf(1)*xbody(2,id)+bodyf(2)*xbody(3,id)+
      &                  bodyf(3)*xbody(4,id)-1.d0).gt.1.d-10) then
                         id=id-1
@@ -151,6 +167,23 @@
                      xbody(2,id)=bodyf(1)
                      xbody(3,id)=bodyf(2)
                      xbody(4,id)=bodyf(3)
+                  elseif(ilabel.eq.6) then
+                     if(idefbody(id).eq.0) then
+                        xbody(1,id)=xmagnitude
+                        idefbody(id)=1
+                     else
+                        if(ibody(2,id).ne.iamplitude) then
+                           write(*,*) '*ERROR in bodyadd:'
+                           write(*,*) '       it is not allowed to add'
+                           write(*,*) '       two Coriolis loads with'
+                           write(*,*) '       different amplitudes'
+                           call exit(201)
+                        endif
+                        xbody(1,id)=xbody(1,id)+xmagnitude
+                     endif
+                     xbody(2,id)=bodyf(1)
+                     xbody(3,id)=bodyf(2)
+                     xbody(4,id)=bodyf(3)
                   endif
                   return
                endif
@@ -201,6 +234,11 @@
          xbody(6,id1)=p2(2)
          xbody(7,id1)=p2(3)
       elseif(ilabel.eq.2) then
+         xbody(1,id1)=xmagnitude
+         xbody(2,id1)=bodyf(1)
+         xbody(3,id1)=bodyf(2)
+         xbody(4,id1)=bodyf(3)
+      elseif(ilabel.eq.6) then
          xbody(1,id1)=xmagnitude
          xbody(2,id1)=bodyf(1)
          xbody(3,id1)=bodyf(2)

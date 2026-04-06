@@ -365,13 +365,22 @@ c                     if(iperturb.eq.0) then
                      q(i1)=q(i1)-p1(i1,jj1)
                   enddo
                   const=q(1)*p2(1,jj1)+q(2)*p2(2,jj1)+q(3)*p2(3,jj1)
-!     
-!     inclusion of the centrifugal force into the body force
 !
-! JMW handle ROTA     
-                  do i1=1,3
-                     bf(i1)=bf(i1)+(q(i1)-const*p2(i1,jj1))*om(jj1)
-                  enddo
+!     negative om signals Euler (rotational acceleration) force
+                  if(om(jj1).gt.0.d0) then
+!     inclusion of the centrifugal force into the body force
+                     do i1=1,3
+                        bf(i1)=bf(i1)+(q(i1)-const*p2(i1,jj1))*om(jj1)
+                     enddo
+                  else
+!     inclusion of the Euler force into the body force
+                     bf(1)=bf(1)+(p2(2,jj1)*(q(3)-const*p2(3,jj1))
+     &                    -p2(3,jj1)*(q(2)-const*p2(2,jj1)))*om(jj1)
+                     bf(2)=bf(2)+(p2(3,jj1)*(q(1)-const*p2(1,jj1))
+     &                    -p2(1,jj1)*(q(3)-const*p2(3,jj1)))*om(jj1)
+                     bf(3)=bf(3)+(p2(1,jj1)*(q(2)-const*p2(2,jj1))
+     &                    -p2(2,jj1)*(q(1)-const*p2(1,jj1)))*om(jj1)
+                  endif
                enddo
 !     
                do i1=1,3

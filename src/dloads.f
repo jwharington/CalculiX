@@ -310,6 +310,52 @@
             ier=1
             return
           endif
+        elseif(label(1:8).eq.'CORIOLIS') then
+!
+!         static Coriolis body force: -2*rho*omega x v
+!         input: omega (magnitude), axis direction p2, velocity vector v
+!         p1 (axis point) is read for format consistency but not used
+!
+          do i=1,3
+            read(textpart(i+3)(1:20),'(f20.0)',iostat=istat) p1(i)
+            if(istat.gt.0) then
+              call inputerror(inpc,ipoinpc,iline,
+     &             "*DLOAD%",ier)
+              return
+            endif
+          enddo
+          do i=1,3
+            read(textpart(i+6)(1:20),'(f20.0)',iostat=istat) p2(i)
+            if(istat.gt.0) then
+              call inputerror(inpc,ipoinpc,iline,
+     &             "*DLOAD%",ier)
+              return
+            endif
+          enddo
+          dd=dsqrt(p2(1)**2+p2(2)**2+p2(3)**2)
+          do i=1,3
+            p2(i)=p2(i)/dd
+          enddo
+!
+!         read velocity vector into p1 (reuse as temp; axis point
+!         is not needed for the uniform static Coriolis force)
+!
+          do i=1,3
+            read(textpart(i+9)(1:20),'(f20.0)',iostat=istat) p1(i)
+            if(istat.gt.0) then
+              call inputerror(inpc,ipoinpc,iline,
+     &             "*DLOAD%",ier)
+              return
+            endif
+          enddo
+!
+!         compute Coriolis acceleration: cf = -2*omega*(p2 x v)
+!         p1 holds the velocity v; result stored in bodyf
+!
+          bodyf(1)=-2.d0*xmagnitude*(p2(2)*p1(3)-p2(3)*p1(2))
+          bodyf(2)=-2.d0*xmagnitude*(p2(3)*p1(1)-p2(1)*p1(3))
+          bodyf(3)=-2.d0*xmagnitude*(p2(1)*p1(2)-p2(2)*p1(1))
+          xmagnitude=dsqrt(bodyf(1)**2+bodyf(2)**2+bodyf(3)**2)
         elseif(((label(1:2).ne.'P1').and.(label(1:2).ne.'P2').and.
      &         (label(1:2).ne.'P3').and.(label(1:2).ne.'P4').and.
      &         (label(1:2).ne.'P5').and.(label(1:2).ne.'P6').and.
@@ -336,7 +382,8 @@ c     BernhardiEnd
             return
           endif
           if((label(1:7).eq.'CENTRIF').or.(label(1:4).eq.'GRAV').or.
-     &         (label(1:6).eq.'NEWTON').or.(label(1:4).eq.'ROTA')) then
+     &         (label(1:6).eq.'NEWTON').or.(label(1:4).eq.'ROTA').or.
+     &         (label(1:8).eq.'CORIOLIS')) then
             elset(1:80)=textpart(1)(1:80)
             elset(81:81)=' '
             call bodyadd(cbody,ibody,xbody,nbody,nbody_,elset,label,
@@ -453,7 +500,8 @@ c          enddo
           endif
 !     
           if((label(1:7).eq.'CENTRIF').or.(label(1:4).eq.'GRAV').or.
-     &         (label(1:6).eq.'NEWTON').or.(label(1:4).eq.'ROTA')) then
+     &         (label(1:6).eq.'NEWTON').or.(label(1:4).eq.'ROTA').or.
+     &         (label(1:8).eq.'CORIOLIS')) then
             call bodyadd(cbody,ibody,xbody,nbody,nbody_,elset,label,
      &           iamplitude,xmagnitude,p1,p2,bodyf,xbodyold,lc,idefbody)
           else

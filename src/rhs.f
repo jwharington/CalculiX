@@ -115,7 +115,7 @@
             do
               j=ipobody(1,index)
               if(j.eq.0) exit
-              if(abs(ibody(1,j)).eq.1) then
+              if((abs(ibody(1,j)).eq.1).or.(ibody(1,j).eq.5)) then
                 nom=nom+1
                 if(nom.gt.2) then
                   write(*,*)
@@ -125,8 +125,7 @@
                   call exit(201)
                 endif
                 om(nom)=xbody(1,j)
-! JMW TODO handle ROTA
-                if(ibody(1,j).eq.1) then
+                if((ibody(1,j).eq.1).or.(ibody(1,j).eq.5)) then
                   p1(1,nom)=xbody(2,j)
                   p1(2,nom)=xbody(3,j)
                   p1(3,nom)=xbody(4,j)
@@ -134,10 +133,28 @@
                   p2(2,nom)=xbody(6,j)
                   p2(3,nom)=xbody(7,j)
                 endif
+                if(ibody(1,j).eq.5) then
+!     handle rotational acceleration (Euler forces):
+!     pass negative om to signal Euler path in e_c3d_rhs
+                  if(om(nom).gt.0.d0) then
+                    p2(1,nom)=-p2(1,nom)
+                    p2(2,nom)=-p2(2,nom)
+                    p2(3,nom)=-p2(3,nom)
+                    om(nom)=-om(nom)
+                  endif
+                endif
 !     
 !     assigning gravity forces
 !     
               elseif(ibody(1,j).eq.2) then
+                bodyf(1)=bodyf(1)+xbody(1,j)*xbody(2,j)
+                bodyf(2)=bodyf(2)+xbody(1,j)*xbody(3,j)
+                bodyf(3)=bodyf(3)+xbody(1,j)*xbody(4,j)
+!     
+!     assigning Coriolis body forces for static analysis
+!     (force = -2*rho*omega x v, stored as magnitude*direction)
+!     
+              elseif(ibody(1,j).eq.6) then
                 bodyf(1)=bodyf(1)+xbody(1,j)*xbody(2,j)
                 bodyf(2)=bodyf(2)+xbody(1,j)*xbody(3,j)
                 bodyf(3)=bodyf(3)+xbody(1,j)*xbody(4,j)
