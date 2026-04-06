@@ -1,6 +1,6 @@
 
-CFLAGS = -Wall -g  -I/usr/include/spooles  -DARCH="Linux" -DSPOOLES -DARPACK -DMATRIXSTORAGE -DNETWORKOUT
-FFLAGS = -Wall -g -cpp
+CFLAGS = -Wall -g  -I ../../SPOOLES.2.2 -DARCH="Linux" -DSPOOLES -DARPACK -DMATRIXSTORAGE -DNETWORKOUT
+FFLAGS = -Wall -g -cpp 
 
 CC=cc
 FC=gfortran
