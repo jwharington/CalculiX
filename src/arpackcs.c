@@ -76,7 +76,7 @@ void arpackcs(double *co, ITG *nk, ITG **konp, ITG **ipkonp, char **lakonp,
 	      ITG **islavsurfp,double **pslavsurfp,double **clearinip,
 	      ITG *nmat,char *typeboun,ITG *ielprop,double *prop,
 	      char *orname,ITG *inewton,double *t0g,double *t1g,
-	      double *alpha){
+	      double *alpha,ITG *imastload,double *pmastload){
 
   /* calls the Arnoldi Package (ARPACK) for cyclic symmetry calculations */
   
@@ -103,7 +103,8 @@ void arpackcs(double *co, ITG *nk, ITG **konp, ITG **ipkonp, char **lakonp,
     maxprevcontel,iflagact=0,*nmc=NULL,icutb=0,ialeatoric=0,
     *iponoeln=NULL,*inoeln=NULL,network=0,ioffr,nrhs=1,*iponoel=NULL,
     ioffrl,igreen=0,mscalmethod=0,kref,*jqw=NULL,*iroww=NULL,nzsw,
-    *islavquadel=NULL,*irowt=NULL,*jqt=NULL,mortartrafoflag=0;
+    *islavquadel=NULL,*irowt=NULL,*jqt=NULL,mortartrafoflag=0,
+    inoelsize,*inoel=NULL,nramp=-1;
 
   double *stn=NULL,*v=NULL,*resid=NULL,*z=NULL,*workd=NULL,*vr=NULL,
     *workl=NULL,*d=NULL,sigma,*temp_array=NULL,*vini=NULL,dtset,
@@ -149,7 +150,7 @@ void arpackcs(double *co, ITG *nk, ITG **konp, ITG **ipkonp, char **lakonp,
      (needed in resultsforc.c) */
   
   NNEW(iponoel,ITG,*nk);
-  FORTRAN(nodebelongstoel,(iponoel,lakon,ipkon,kon,ne));
+  FORTRAN(nodebelongstoel,(iponoel,inoel,&inoelsize,lakon,ipkon,kon,ne,&nramp));
 
   if(*nmethod==13){
     *nmethod=2;
@@ -351,6 +352,13 @@ void arpackcs(double *co, ITG *nk, ITG **konp, ITG **ipkonp, char **lakonp,
 	      xnoels,mortar,pslavsurf,pmastsurf,clearini,&theta,
 	      xstateini,xstate,nstate_,&icutb,&ialeatoric,jobnamef,
 	      &alea,auw,jqw,iroww,&nzsw);
+
+      if(nasym==1){
+	printf("\n*WARNING in arpackcs: asymmetric eigenvalue solver\n");
+	printf("         is not available for cyclic symmetric structures;\n");
+	printf("         the matrix is symmetrized\n\n");
+	nasym=0;
+      }
 	  
       printf("number of contact spring elements=%" ITGFORMAT "\n\n",*ne-ne0);
 	  
@@ -599,7 +607,7 @@ void arpackcs(double *co, ITG *nk, ITG **konp, ITG **ipkonp, char **lakonp,
 			  tieset,istartset,iendset,ialset,ntie,&nasym,pslavsurf,
 			  pmastsurf,mortar,clearini,ielprop,prop,&ne0,&kscale,
 			  xstateini,xstate,nstate_,set,nset,smscale,
-			  &mscalmethod));
+			  &mscalmethod,imastload,pmastload));
     }
     else{
       FORTRAN(mafillsmcs,(co,nk,kon,ipkon,lakon,ne,nodeboun,ndirboun,xboun,
@@ -622,7 +630,7 @@ void arpackcs(double *co, ITG *nk, ITG **konp, ITG **ipkonp, char **lakonp,
 			  tieset,istartset,iendset,ialset,ntie,&nasym,pslavsurf,
 			  pmastsurf,mortar,clearini,ielprop,prop,&ne0,&kscale,
 			  xstateini,xstate,nstate_,set,nset,smscale,
-			  &mscalmethod));
+			  &mscalmethod,imastload,pmastload));
 	  
       if(nasym==1){
 	RENEW(au,double,nzs[2]+nzs[1]);
@@ -646,7 +654,7 @@ void arpackcs(double *co, ITG *nk, ITG **konp, ITG **ipkonp, char **lakonp,
 			      integerglob,doubleglob,tieset,istartset,iendset,
 			      ialset,ntie,&nasym,nstate_,xstateini,xstate,
 			      pslavsurf,pmastsurf,mortar,clearini,ielprop,prop,
-			      &ne0,&kscale,set,nset));
+			      &ne0,&kscale,set,nset,imastload,pmastload));
 	      
       }
     }
